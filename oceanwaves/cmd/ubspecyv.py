@@ -1,10 +1,9 @@
+#!/usr/bin/env python
 import sys
 from math import *
 import numpy as np
 
-from .yvwave import yvwave
-from .qkhfs import qkhfs
-from .ubspecpar import ubspecpar
+from oceanwaves import yvwave, qkhfs, ubspecpar
 
 
 def main(argv=None):
@@ -76,6 +75,7 @@ def main(argv=None):
     else:
         print  'ubr = ',ubr[0], 'm/s'
         print 'Tbr = ', Tbr[0], 's'
-       
+
+
 if __name__ == "__main__":
     sys.exit(main())

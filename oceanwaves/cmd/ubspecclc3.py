@@ -1,9 +1,10 @@
+#!/usr/bin/env python
+
 import sys
 from math import *
 import numpy as np
 
-from .qkhfs import qkhfs
-from .ubspecpar import ubspecpar
+from oceanwaves import qkhfs, ubspecpar
 
 
 def main(argv=None):
