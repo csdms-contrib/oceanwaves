@@ -10,6 +10,7 @@ def ubspecdat(h,s,f,df):
     """Calculate ubr and Tbr from measured spectra
 
     The input parameter *f* can be either a scalar to a vector with 
+
     Parameters
     ----------
     h : float or array-like
@@ -22,8 +23,7 @@ def ubspecdat(h,s,f,df):
         Row vector with central frequencies (Hz)
     df : float, optional
         Scalar or row vector with freq. bandwidths (Hz)
-        
-        - scalar or col. vector with length
+
     Returns
     -------
     (ubr, Tbr) :
@@ -73,10 +73,8 @@ def ubspecdat(h,s,f,df):
     
     return ubr, Tbr
 
-[f,s,hs,yd] = lx.loadndbc()
 
-h = 10
-[ubr,Tbr] = ubspecdat(h,s,f,[])
+ #[f,s,hs,yd] = lx.loadndbc()
 
-
-
+ #h = 10
+ #[ubr,Tbr] = ubspecdat(h,s,f,[])
