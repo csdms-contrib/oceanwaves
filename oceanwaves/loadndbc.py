@@ -1,4 +1,6 @@
 import numpy as np
+
+
 def doy(month, day, year):
     """
     Calculation of day of year. If year is provided it will be tested for
