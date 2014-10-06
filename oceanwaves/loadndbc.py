@@ -50,9 +50,10 @@ def is_leap_year(year):
                          year % 400 == 0)
     
 def loadndbc():
-    # LOADNBDC - Script to load NDBC text files
-    # Works for new format with minutes in date
+    """Load NDBC text files
 
+    Works for new format with minutes in date
+    """
     # csherwood@usgs.gov
     # Last revised 18 Aug. 2006
     # Recoded in python by PL Wiberg Oct 2014

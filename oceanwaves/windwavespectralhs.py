@@ -3,30 +3,38 @@ from math import *
 import numpy as np
 
 def jonswapwave(u10,x,vflag):
-    
-#     JONSWAPWAVE(u10,x,vflag) returns Hsig,Tp [Tm,Tz]
-#     Uses JONSWAP (Haseelmann et al 1973) wave spectrum 
-#     to determine wave parameters Hsig and peak period
-#
-#     ALL UNITS MKS
-#
-#     INPUTS:
-#     u10   = Windspeed at 10 m above surface (m/s)
-#     x     = Wave fetch  (m)
-#     vflag = c for constant (gam = 3.3) or v for veriable gamma spectrum
-#                  
-#     OUTPUTS:
-#     Hsig  = Significant wave height (m)
-#     Tp     = Peak period (s)
-#     Tm     = Mean period (s)
-#     Tz     = Zero-crossing period (s)
-#
-#     NOTES:
-#     Hsig = 4*sqrt(int(S)), S= surface elevation spectrum
-##
-#     References:
-#     Hasselman et al.
+    """Significant wave height and peak period using jonswap method.
 
+    Uses JONSWAP (Haseelmann et al 1973) wave spectrum 
+    to determine wave parameters Hsig and peak period
+
+    ALL UNITS MKS
+
+    Parameters
+    ----------
+    u10 : float
+        Windspeed at 10 m above surface (m/s)
+    x : float
+        Wave fetch  (m)
+    vflag :{'c', 'v'}
+        *c* for constant (gam = 3.3) or *v* for veriable gamma spectrum
+
+    Returns
+    -------
+    (Hsig, Tp, Tm, Tz)
+        Hsig = Significant wave height (m)
+        Tp = Peak period (s)
+        Tm = Mean period (s)
+        Tz = Zero-crossing period (s)
+
+    Notes
+    -----
+    Hsig = 4*sqrt(int(S)), S= surface elevation spectrum
+
+    References
+    ----------
+    Hasselman et al.
+    """
     g = 9.806
     dffp = 0.02
     ffp = np.arange(0.2,5+dffp,dffp)
@@ -78,29 +86,34 @@ def jonswapwave(u10,x,vflag):
     
     return Hsig, Tp
 
+
 def donelanwave(u10,x):
-    
-#     DONELANWAVE(u10,x) returns Hsig,Tp [Tm,Tz]
-#     Uses Donelan (REF) wave spectrum 
-#     to determine wave parameters Hsig and peak period
-#
-#     ALL UNITS MKS
-#
-#     INPUTS:
-#     u10   = Windspeed at 10 m above surface (m/s)
-#     x     = Wave fetch  (m)
-#                  
-#     OUTPUTS:
-#     Hsig  = Significant wave height (m)
-#     Tp     = Peak period (s)
-#     Tm     = Mean period (s)
-#     Tz     = Zero-crossing period (s)
-#
-#     NOTES:
-#     Hsig = 4*sqrt(int(S)), S= surface elevation spectrum
-##
-#     References:
-#    
+    """Significant wave height and peak period using Donelan method.
+
+    Uses Donelan (REF) wave spectrum to determine wave parameters Hsig and
+    peak period
+
+    ALL UNITS MKS
+
+    Parameters
+    ----------
+    u10 : float
+        Windspeed at 10 m above surface (m/s)
+    x : float
+        Wave fetch  (m)
+
+    Returns
+    -------
+    (Hsig, Tp, Tm, Tz)
+        Hsig  = Significant wave height (m)
+        Tp     = Peak period (s)
+        Tm     = Mean period (s)
+        Tz     = Zero-crossing period (s)
+
+    Notes
+    -----
+    Hsig = 4*sqrt(int(S)), S = surface elevation spectrum
+    """
 
     g = 9.806
     dffp = 0.02
@@ -149,78 +162,6 @@ def donelanwave(u10,x):
     Tm = Tmfp
     Tz = Tzfp
     Tp = 1./fp
-    
-    return Hsig, Tp
-
-
-def yvwave(u10,d,x):
-    
-#     YVWAVE(u10,d,x) returns Hsig, Tpeak
-#     Uses Young and Verhgen (1996) fetch-limited, finite-depth wave growth 
-#     to determine wave parameters Hsig and peak period
-#
-#     ALL UNITS MKS
-#
-#     INPUTS:
-#     u10   = Windspeed at 10 m above surface (m/s)
-#     d     = Water Depth (m)
-#     x     = Wave fetch  (m)
-#                  
-#     OUTPUTS:
-#     Hsig  = Significant wave height (m)
-#     Tp     = Peak period (s)
-#
-#     NOTES:
-#     Hsig = 4*sqrt(E), E= variance(surface elevation)
-#
-#     u10 and d should be averaged along the fetch,e.g:
-#         u10 = 1/x * integral([0->x],u10(xt)dxt) and
-#         d   = 1/x * integral([0->x],d(xt)dxt)
-#
-# References:
-#    Young, I.R. and L.A. Verhagen, 1996. The growth of fetch limited 
-#     waves in water of finite depth. Part 1. Total energy and peak 
-#     frequency. Coastal Engineering, 29: 47-78.
-
-#     J.Paul Rinehimer 10 April 2007
-#     Recoded in python by PL Wiberg, Sep 2014
-
-    # Parameters
-    minreal = 1.0e-4
-    g       = 9.806
-    n       = 1.74
-    m       = -0.37
-    invn = 1.0 / n
-    invm = 1.0 / m
-  
-    # Lower limits of u10,d,x
-    u10 = np.maximum(u10,minreal)
-    d   = np.maximum(d, minreal)
-    x   = np.maximum(x, minreal)
-    
-    # Calculate non-dimensional parameters
-    chi   = g * x / u10 ** 2
-    delta = g * d / u10 ** 2
-  
-    # Calculate a1,b1,a2,b2
-    a1 = (0.292 * (delta ** 1.3)) ** invn
-    b1 = (4.396E-5 * chi) ** invn
-    a2 = (1.505 * (delta ** -0.375)) ** invm
-    b2 = (16.391 * (chi ** -0.27)) ** invm
-  
-    ta1 = np.tanh(a1)
-    ta2 = np.tanh(a2)
-  
-    # Calculate non-dimensional energy and frequency
-    epsl = 0.00364 * (ta1 * np.tanh(b1/ta1)) ** n
-    nu   = 0.133   * (ta2 * np.tanh(b2/ta2)) ** m
-  
-    # Calculate Hsig and period
-    hs = 4 * np.sqrt(epsl * u10 ** 4 / g ** 2)
-    t    = 1.0 / (g * nu / u10)
-    
-    Hsig = hs
-    Tp = t
     
     return Hsig, Tp
 

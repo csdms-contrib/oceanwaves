@@ -2,36 +2,43 @@ import sys
 from math import *
 import numpy as np
 
-def yvwave(u10,d,x):
-    
-# [Hsig,t] = YVWAVE(u10,d,x)
-#     Uses Young and Verhgen (1996) fetch-limited, finite-depth wave growth 
-#     to determine wave parameters Hsig and peak period
-#
-#     ALL UNITS MKS
-#
-#     INPUTS:
-#     u10   = Windspeed at 10 m above surface (m/s)
-#     d     = Water Depth (m)
-#     x     = Wave fetch  (m)
-#                  
-#     OUTPUTS:
-#     Hsig  = Significant wave height (m)
-#     t     = Peak period (s)
-#
-#     NOTES:
-#     Hsig = 4*sqrt(E), E= variance(surface elevation)
-#
-#     u10 and d should be averaged along the fetch,e.g:
-#         u10 = 1/x * integral([0->x],u10(xt)dxt) and
-#         d   = 1/x * integral([0->x],d(xt)dxt)
-#
-# References:
-#    Young, I.R. and L.A. Verhagen, 1996. The growth of fetch limited 
-#     waves in water of finite depth. Part 1. Total energy and peak 
-#     frequency. Coastal Engineering, 29: 47-78.
 
-#     J.Paul Rinehimer 10 April 2007
+def yvwave(u10,d,x):
+    """Significant wave height and peak period using Young and Verhgen method.
+    
+    Uses Young and Verhgen (1996) fetch-limited, finite-depth wave growth 
+    to determine wave parameters Hsig and peak period
+    
+    Parameters
+    ----------
+    u10 : float
+        Windspeed at 10 m above surface (m/s)
+    d : float
+        Water Depth (m)
+    x : float
+        Wave fetch (m)
+
+    Returns
+    -------
+    (Hsig, Tp)
+        Significant wave height (m) and peak period (s)
+
+    Notes
+    -----
+    Hsig = 4*sqrt(E), E = variance (surface elevation)
+
+    u10 and d should be averaged along the fetch,e.g:
+        u10 = 1/x * integral([0->x],u10(xt)dxt) and
+        d   = 1/x * integral([0->x],d(xt)dxt)
+
+    References
+    ----------
+    Young, I.R. and L.A. Verhagen, 1996. The growth of fetch limited 
+        waves in water of finite depth. Part 1. Total energy and peak 
+        frequency. Coastal Engineering, 29: 47-78.
+    """
+    # J.Paul Rinehimer 10 April 2007
+    # Recoded in python by PL Wiberg, Sep 2014
 
     # Parameters
     minreal = 1.0e-4
@@ -45,8 +52,6 @@ def yvwave(u10,d,x):
     u10 = np.maximum(u10,minreal)
     d   = np.maximum(d, minreal)
     x   = np.maximum(x, minreal)
-    Hsig = []
-    Tp = []
     
     # Calculate non-dimensional parameters
     chi   = g * x / u10 ** 2
@@ -69,7 +74,7 @@ def yvwave(u10,d,x):
     hs = 4 * np.sqrt(epsl * u10 ** 4 / g ** 2)
     t    = 1.0 / (g * nu / u10)
     
-    Hsig.append(hs)
-    Tp.append(t)
+    Hsig = hs
+    Tp = t
     
     return Hsig, Tp

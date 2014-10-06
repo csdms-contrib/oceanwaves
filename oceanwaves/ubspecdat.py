@@ -7,23 +7,33 @@ from .qkhfs import qkhfs
 
 
 def ubspecdat(h,s,f,df):
-# UBSPECDAT - Calculate ubr and Tbr from measured spectra
-# ubspecdat(h,s,f,df) returns ubr,Tbr
-#
-# Input:
-#   h = water depth (m) - scalar or col. vector with length
-#   s(nf) or s(nt,nf) = array of spectral densities normalized so that
-#                       Hs = 4*sum(s,2)*df
-#   f       = row vector with central frequencies (Hz)
-#   df      = (optional) scalar or row vector with freq. bandwidths (Hz)
-# Returns:
-#   ubr = representative bottom orbital velocity (m/s)
-#   Tbr = representative bottom wave period [ (s)
-#   The alternative bottom period, Tbz, is also calculated (see text).
+    """Calculate ubr and Tbr from measured spectra
 
-# Chris Sherwood, USGS
-# Last revised September 8, 2006
-# Recoded in Python by PL Wiberg, Oct 2014
+    The input parameter *f* can be either a scalar to a vector with 
+    Parameters
+    ----------
+    h : float or array-like
+        Water depth (m)
+    s : array-like
+        Spectral densities normalized so that
+            Hs = 4 * sum(s, 2) * df
+        *s* is either of length *nf* or (*nt*, *nf*).
+    f : array-like
+        Row vector with central frequencies (Hz)
+    df : float, optional
+        Scalar or row vector with freq. bandwidths (Hz)
+        
+        - scalar or col. vector with length
+    Returns
+    -------
+    (ubr, Tbr) :
+        ubr = representative bottom orbital velocity (m/s)
+        Tbr = representative bottom wave period (s)
+        The alternative bottom period, Tbz, is also calculated (see text).
+    """
+    # Chris Sherwood, USGS
+    # Last revised September 8, 2006
+    # Recoded in Python by PL Wiberg, Oct 2014
 
     print h
     print f

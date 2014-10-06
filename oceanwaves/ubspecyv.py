@@ -1,8 +1,8 @@
 import sys
 from math import *
 import numpy as np
-import yvwave
 
+from .yvwave import yvwave
 from .qkhfs import qkhfs
 from .ubspecpar import ubspecpar
 
@@ -53,7 +53,7 @@ def main(argv=None):
         specform = 'D'
 
     #run Young and Verhagen model to get hs, tp
-    [hs,tp] = yvwave.yvwave(u10,h,x)
+    [hs,tp] = yvwave(u10,h,x)
     if type(hs) == list: 
         hs = np.array(hs)
     if hs.ndim == 2:
