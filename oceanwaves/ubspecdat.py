@@ -1,15 +1,11 @@
-import sys
-from math import *
 import numpy as np
-import loadndbc as lx
-
-from .qkhfs import qkhfs
+from oceanwaves import qkhfs
 
 
 def ubspecdat(h,s,f,df):
     """Calculate ubr and Tbr from measured spectra
 
-    The input parameter *f* can be either a scalar to a vector with 
+    The input parameter *f* can be either a scalar or a vector 
 
     Parameters
     ----------
@@ -35,11 +31,7 @@ def ubspecdat(h,s,f,df):
     # Last revised September 8, 2006
     # Recoded in Python by PL Wiberg, Oct 2014
 
-    print h
-    print f
-    print s    
     xx = s.shape
-    print xx
     nf = xx[1]
     nt = xx[0]
     w = 2 * np.pi * f
@@ -50,20 +42,16 @@ def ubspecdat(h,s,f,df):
     kh = np.tile(kh,(nt,1))
     h = h * np.ones((nt,nf))
 
-    print df
     if df:
-        if np.len(df)==1:
+        if np.len(df) == 1:
             df = df * np.ones(nt,nf)
         elif np.len(df) == nf:
             df = np.tile(df,(nt,1))
     else:
         df = np.diff(f)
-        print type(df)
-        print type(df[-1])
         df = np.hstack((df,df[-1]))
         df = np.tile(df,(nt,1))
-
-    
+  
     Su = ((w ** 2) / (np.sinh(kh) ** 2)) * s
     ubr = np.sqrt(2 * np.sum((Su * df)))
     fr = np.sum((Su * fm * df)) / (np.sum((Su * df)))
@@ -72,9 +60,4 @@ def ubspecdat(h,s,f,df):
     Tbz = 1. / fz
     
     return ubr, Tbr
-
-
- #[f,s,hs,yd] = lx.loadndbc()
-
- #h = 10
- #[ubr,Tbr] = ubspecdat(h,s,f,[])
+    

@@ -15,7 +15,7 @@ def doy(month, day, year):
     year : numpy.ndarray or int32, optional
         Year.
 
-    Retruns
+    Returns
     -------
     doy : numpy.ndarray or int32
         Day of year.
@@ -53,6 +53,19 @@ def loadndbc():
     """Load NDBC text files
 
     Works for new format with minutes in date
+    
+    Input: NDBC spectral data file
+    
+    Returns
+    -------
+    (Hsig, Tp, s, f)
+        yd = yearday of record
+        Hsig = Significant wave height (m)
+        Tp = Peak period (s)
+        s = wave spectrum
+        f = frequencies for wave spectrum
+    
+    
     """
     # csherwood@usgs.gov
     # Last revised 18 Aug. 2006
@@ -89,22 +102,24 @@ def loadndbc():
         for i in range(nf):
             sr.append(float(sstr[i]))
         hsr = 4*np.sqrt(np.sum(sr) / 100 )
+        fp = f[sr == np.max(sr)]
+        tpr = 1. / fp
         ydr =  float(doy(MMr, DDr, YYr)) + (float(HHr) +float(mnr) / 60.) / 24.
         dvecr = [YYr,MMr,DDr,HHr,mnr]
         yd.append(ydr)
         dvec.append(dvecr)
         hs.append(hsr)
+        tp.append(tpr)
         rno = rno + 1
     slong = np.array(sr)
     s = np.reshape(slong,(rno-1,nf))
     f = np.array(f)
     yd = np.array(yd)
-    hs = np.array(hs)
+    Hsig = np.array(hs)
+    Tp = np.array(tp)
         
     ndbc_in_file.close()
 
     # calculate signficant wave height (assumes uniform frequency bin size)
     
-    return f,s,hs,yd
-
-#[f,s,hs,yd] = loadndbc()
+    return Hsig, Tp, s, f, yd

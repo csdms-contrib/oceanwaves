@@ -1,13 +1,11 @@
-import sys
-from math import *
 import numpy as np
 
 
-def donelanwave(u10,x):
-    """Significant wave height and peak period using Donelan method.
+def jonswap_hs(u10,x):
+    """Significant wave height and peak period using JONSWAP method with gam = 33.
 
-    Uses Donelan (REF) wave spectrum to determine wave parameters Hsig and
-    peak period
+    Uses JONSWAP (Haseelmann et al 1973) wave spectrum 
+    to determine wave parameters Hsig and peak period
 
     ALL UNITS MKS
 
@@ -16,21 +14,24 @@ def donelanwave(u10,x):
     u10 : float
         Windspeed at 10 m above surface (m/s)
     x : float
-        Wave fetch  (m)
+        Wave fetch  (m) [x = 999 triggers fully developed wave spectrum]
 
     Returns
     -------
     (Hsig, Tp, Tm, Tz)
-        Hsig  = Significant wave height (m)
-        Tp     = Peak period (s)
-        Tm     = Mean period (s)
-        Tz     = Zero-crossing period (s)
+        Hsig = Significant wave height (m)
+        Tp = Peak period (s)
+        Tm = Mean period (s)
+        Tz = Zero-crossing period (s)
 
     Notes
     -----
-    Hsig = 4*sqrt(int(S)), S = surface elevation spectrum
-    """
+    Hsig = 4*sqrt(int(S)), S= surface elevation spectrum
 
+    References
+    ----------
+    Hasselman et al.
+    """
     g = 9.806
     dffp = 0.02
     ffp = np.arange(0.2,5+dffp,dffp)
@@ -48,15 +49,15 @@ def donelanwave(u10,x):
         fp = fpbar * g / u10
     f = ffp * fp    
     df = dffp * fp
-    gam = 1.7
-    if fpbar >= 0.05:
-        if fpbar > 0.159: gam = 6.5 + 2.606 * np.log(fpbar)
-        sig = 0.08 + 0.0013 * fpbar ** -3
-    else:
-        sig = 0.08 + 0.0013 * 0.05 ** -3
-    alph = 0.0165 * fpbar ** 0.55
-    beta = 1.0
-    xi = 1
+    sig = list(ffp)
+    sig = np.array([0.07 if j < 1 else 0.09 for j in sig])
+    alph = 0.033 * fpbar ** 0.667
+    gam = 3.3
+    #alternative values for modified JONSWAP spectrum
+    #alph = 0.033 * fpbar ** 0.86
+    #gam = 4.42 * fpbar ** 0.43
+    beta = 1.25
+    xi = 0
     eterm = -((ffp - 1) ** 2) / (2 * sig ** 2)
     ee = np.exp(eterm)
     t2 = gam ** ee
@@ -67,17 +68,12 @@ def donelanwave(u10,x):
     Xf = 1 / np.sum(sffpn * dffp)
     m0fp = np.sum(sffp * df)
     m1fp = np.sum(f * sffp * df)
-    m2fp = np.sum(f ** 2. * sffp * df)
-    Tzfp = np.sqrt(m0fp / m2fp)
-    Tmfp = m0fp / m1fp
+    m2fp = np.sum(f **2. * sffp * df)
+    Tz = np.sqrt(m0fp / m2fp)
+    Tm = m0fp / m1fp
 
     # Calculate Hsig
-    hs = 4 * np.sqrt(m0fp)
-    
-    Hsig = hs
-    Tm = Tmfp
-    Tz = Tzfp
+    Hsig = 4 * np.sqrt(m0fp)
     Tp = 1./fp
     
     return Hsig, Tp
-

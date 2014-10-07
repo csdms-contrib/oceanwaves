@@ -1,10 +1,8 @@
-import sys
-from math import *
 import numpy as np
 
 
-def yvwave(u10,d,x):
-    """Significant wave height and peak period using Young and Verhgen method.
+def youngverhagen_hs(u10,d,x):
+    """Significant wave height and peak period using Young and Verhgen spectrum.
     
     Uses Young and Verhgen (1996) fetch-limited, finite-depth wave growth 
     to determine wave parameters Hsig and peak period
