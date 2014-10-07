@@ -26,10 +26,12 @@ Advance the component and get wave height and period.
 >>> waves.update()
 >>> waves.get_current_time()
 1.0
->>> waves.get_grid_values('sea_surface_water_wave__height')
-0.079255203414445446
->>> waves.get_grid_values('sea_surface_water_wave__period')
-1.3308916240613515
+>>> height = waves.get_grid_values('sea_surface_water_wave__height')
+>>> period = waves.get_grid_values('sea_surface_water_wave__period')
+>>> print round(height, 6)
+0.079255
+>>> print round(period, 6)
+1.330892
 """
 from bisect import bisect
 import numpy as np
