@@ -54,6 +54,19 @@ class BottomWaveVelocity(object):
         'sea_bottom_water_wave__period',
     ]
 
+    _var_units = {
+        'sea_surface_water_wave__height': 'm',
+        'sea_surface_water_wave__period': 's',
+        'sea_water__depth': 'm',
+        'sea_bottom_water_wave__max_of_orbital_speed': 'm / s',
+        'sea_bottom_water_wave__period': 's',
+    }
+
+    _values = {
+        'sea_bottom_water_wave__max_of_orbital_speed': '_wave_btmorbvel',
+        'sea_bottom_water_wave__period': '_wave_btmperiod',
+    }
+
     def __init__(self):
         self._water_depth = 0.
         self._wave_height = 0.
@@ -80,9 +93,12 @@ class BottomWaveVelocity(object):
 
     def calculate_ubr_vars(self, time):
         index = bisect(self._data[:, 0], self._time)
-        (wave_height, wave_period, water_depth) = self._data[index, 1:]
+        (self._wave_height,
+         self._wave_period,
+         self._water_depth) = self._data[index, 1:]
 
-        (wave_btmorbvel, wave_btmperiod) = ubspecpar(wind_speed, water_depth, fetch)
+        (wave_btmorbvel,
+         wave_btmperiod) = ubspecpar(wind_speed, water_depth, fetch)
 
         return wave_btmorbvel, wave_btmperiod
 
@@ -101,23 +117,32 @@ class BottomWaveVelocity(object):
     def finalize(self):
         self.__init__()
 
-    def get_grid_values(self, name):
-        if name == 'sea_bottom_water_wave__max_of_orbital_speed':
-            return self._wave_btmorbvel
-        elif name == 'sea_bottom_water_wave__period':
-            return self._wave_btmperiod
-        else:
-            raise TypeError('name not understood')
+    def get_var_units(self, name):
+        return self._var_units[name]
 
-    def set_grid_values(self, name, value):
-        if name == 'sea_surface_water_wave__height':
-            self._wave_height = value
-        elif name == 'sea_surface_water_wave__period':
-            self._wave_period = value
-        elif name == 'sea_water__depth':
-            self._water_depth = value
+    def get_var_grid(self, name):
+        return 0
+
+    def get_grid_type(self, gid):
+        return 'point'
+
+    def get_grid_x(self, gid):
+        return 0.
+
+    def get_grid_y(self, gid):
+        return 0.
+
+    def get_value(self, name):
+        return getattr(self, self._values[name])
+
+    def get_value_ref(self, name):
+        raise NotImplementedError('get_value_ref')
+
+    def set_value(self, name, value):
+        if name in self._input_var_names:
+            setattr(self, self._values[name], value)
         else:
-            raise TypeError('name not understood')
+            raise ValueError('{name}: not an input item'.format(name=name))
 
     def get_start_time(self):
         return self._data[0, 0]
