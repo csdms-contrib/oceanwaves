@@ -61,6 +61,12 @@ class WindWaves(object):
         'sea_surface_water_wave__spectrum': '-',
     }
 
+    _values = {
+        'sea_surface_water_wave__height': '_wave_height',
+        'sea_surface_water_wave__period': '_wave_period',
+        'sea_surface_water_wave__spectrum': '_wave_spectrum',
+    }
+
     def __init__(self):
         self._wind_speed = 0.
         self._water_depth = 0.
@@ -86,30 +92,19 @@ class WindWaves(object):
         index = bisect(self._data[:, 0], self._time)
         (wind_speed, water_depth, fetch) = self._data[index, 1:]
 
-        # (wave_height,
-        #  wave_period,
-        #  wave_spectrum,
-        #  wave_specfrequencies) = ow.jonswap_hs(wind_speed, water_depth, fetch)
         wave_height, wave_period = ow.jonswap_hs(wind_speed, fetch)
 
-        # return wave_height, wave_period, wave_spectrum, wave_specfrequencies
         return wave_height, wave_period
 
     def update(self):
         self._time = self._time + 1
 
-        # (self._wave_height,
-        #  self._wave_period,
-        #  self._wave_spectrum) = self.calculate_wave_vars(self._time)
         (self._wave_height,
          self._wave_period) = self.calculate_wave_vars(self._time)
 
     def update_until(self, time):
         self._time = time
 
-        # (self._wave_height,
-        #  self._wave_period,
-        #  self._wave_spectrum) = self.calculate_wave_vars(self._time)
         (self._wave_height,
          self._wave_period) = self.calculate_wave_vars(self._time)
 
@@ -123,7 +118,7 @@ class WindWaves(object):
         return 0
 
     def get_grid_type(self, gid):
-        return 'points'
+        return 'point'
 
     def get_grid_x(self, gid):
         return 0.
@@ -132,27 +127,16 @@ class WindWaves(object):
         return 0.
 
     def get_value(self, name):
-        if name == 'sea_surface_water_wave__height':
-            value = self._wave_height
-        elif name == 'sea_surface_water_wave__period':
-            value = self._wave_period
-        elif name == 'sea_surface_water_wave__spectrum':
-            value = self._wave_spectrum
-        elif name == 'sea_surface_water_wave__specfrequencies':
-            value = self._wave_specfrequencies
-        else:
-            raise TypeError('name not understood')
-
-        return value
+        return getattr(self, self._values[name])
 
     def get_value_ref(self, name):
         raise NotImplementedError('get_value_ref')
 
     def set_value(self, name, value):
         if name in self._input_var_names:
-            self.get_value_ref(name)[:] = value
+            setattr(self, self._values[name], value)
         else:
-            raise TypeError('name not understood')
+            raise ValueError('{name}: not an input item'.format(name=name))
 
     def get_start_time(self):
         return self._data[0, 0]
