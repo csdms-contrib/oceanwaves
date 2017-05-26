@@ -61,6 +61,8 @@ class BottomWaveVelocity(object):
         self._wave_btmorbvel = 0.
         self._wave_btmperiod = 0.
         self._time = 0.
+        self._time_step = 1.
+        self._time_units = 's'
         self._data = np.zeros((1, 4))
 
     def get_component_name(self):
@@ -85,7 +87,7 @@ class BottomWaveVelocity(object):
         return wave_btmorbvel, wave_btmperiod
 
     def update(self):
-        self._time = self._time + 1
+        self._time = self._time + self._time_step
 
         (self._wave_btmorbvel,
          self._wave_btmperiod) = self.calculate_ubr_vars(self._time)
@@ -125,3 +127,9 @@ class BottomWaveVelocity(object):
 
     def get_end_time(self):
         return self._data[-1, 0]
+
+    def get_time_step(self):
+        return self._time_step
+
+    def get_time_units(self):
+        return self._time_units
