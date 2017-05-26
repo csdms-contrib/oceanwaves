@@ -40,6 +40,9 @@ import oceanwaves as ow
 
 
 class WindWaves(object):
+
+    _name = 'WindWaves'
+
     _input_var_names = [
         'land_surface_10m-above_air_flow__speed',
         'sea_surface_air_flow__fetch_length',
@@ -77,6 +80,9 @@ class WindWaves(object):
         self._wave_specfrequencies = []
         self._time = 0.
         self._data = np.zeros((1, 4))
+
+    def get_component_name(self):
+        return self._name
 
     def get_input_var_names(self):
         return self._input_var_names
