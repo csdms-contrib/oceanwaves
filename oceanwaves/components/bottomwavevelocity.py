@@ -37,7 +37,7 @@ Advance the component and get bottom wave velocity and period.
 from bisect import bisect
 import numpy as np
 
-import oceanwaves as oc
+from oceanwaves import ubspecpar
 
 
 class BottomWaveVelocity(object):
@@ -80,7 +80,7 @@ class BottomWaveVelocity(object):
         index = bisect(self._data[:, 0], self._time)
         (wave_height, wave_period, water_depth) = self._data[index, 1:]
 
-        (wave_btmorbvel, wave_btmperiod) = upspecpar(wind_speed, water_depth, fetch)
+        (wave_btmorbvel, wave_btmperiod) = ubspecpar(wind_speed, water_depth, fetch)
 
         return wave_btmorbvel, wave_btmperiod
 
