@@ -26,9 +26,9 @@ Advance the component and get wave height and peak period.
 >>> waves.update()
 >>> waves.get_current_time()
 1.0
->>> height = waves.get_grid_values('sea_surface_water_wave__height')
->>> period = waves.get_grid_values('sea_surface_water_wave__period')
->>> spectrum = waves.get_grid_values('sea_surface_water_wave__spectrum')
+>>> height = waves.get_value('sea_surface_water_wave__height')
+>>> period = waves.get_value('sea_surface_water_wave__period')
+>>> spectrum = waves.get_value('sea_surface_water_wave__spectrum')
 >>> print round(height, 6)
 0.079255
 >>> print round(period, 6)
@@ -51,6 +51,15 @@ class WindWaves(object):
         'sea_surface_water_wave__period',
         'sea_surface_water_wave__spectrum',
     ]
+
+    _var_units = {
+        'land_surface_10m-above_air_flow__speed': 'm / s',
+        'sea_surface_air_flow__fetch_length': 'm',
+        'sea_water__depth': 'm',
+        'sea_surface_water_wave__height': 'm',
+        'sea_surface_water_wave__period': 's',
+        'sea_surface_water_wave__spectrum': '-',
+    }
 
     def __init__(self):
         self._wind_speed = 0.
@@ -77,46 +86,71 @@ class WindWaves(object):
         index = bisect(self._data[:, 0], self._time)
         (wind_speed, water_depth, fetch) = self._data[index, 1:]
 
-        (wave_height, wave_period, wave_spectrum, wave_specfrequencies) = ow.jonswap_hs(wind_speed, water_depth, fetch)
+        # (wave_height,
+        #  wave_period,
+        #  wave_spectrum,
+        #  wave_specfrequencies) = ow.jonswap_hs(wind_speed, water_depth, fetch)
+        wave_height, wave_period = ow.jonswap_hs(wind_speed, fetch)
 
-        return wave_height, wave_period, wave_spectrum, wave_specfrequencies
+        # return wave_height, wave_period, wave_spectrum, wave_specfrequencies
+        return wave_height, wave_period
 
     def update(self):
         self._time = self._time + 1
 
+        # (self._wave_height,
+        #  self._wave_period,
+        #  self._wave_spectrum) = self.calculate_wave_vars(self._time)
         (self._wave_height,
-         self._wave_period,
-         self._wave_spectrum) = self.calculate_wave_vars(self._time)
+         self._wave_period) = self.calculate_wave_vars(self._time)
 
     def update_until(self, time):
         self._time = time
 
+        # (self._wave_height,
+        #  self._wave_period,
+        #  self._wave_spectrum) = self.calculate_wave_vars(self._time)
         (self._wave_height,
-         self._wave_period,
-         self._wave_spectrum) = self.calculate_wave_vars(self._time)
+         self._wave_period) = self.calculate_wave_vars(self._time)
 
     def finalize(self):
         self.__init__()
 
-    def get_grid_values(self, name):
+    def get_var_units(self, name):
+        return self._var_units[name]
+
+    def get_var_grid(self, name):
+        return 0
+
+    def get_grid_type(self, gid):
+        return 'points'
+
+    def get_grid_x(self, gid):
+        return 0.
+
+    def get_grid_y(self, gid):
+        return 0.
+
+    def get_value(self, name):
         if name == 'sea_surface_water_wave__height':
-            return self._wave_height
+            value = self._wave_height
         elif name == 'sea_surface_water_wave__period':
-            return self._wave_period
+            value = self._wave_period
         elif name == 'sea_surface_water_wave__spectrum':
-            return self._wave_spectrum
+            value = self._wave_spectrum
         elif name == 'sea_surface_water_wave__specfrequencies':
-            return self._wave_specfrequencies
+            value = self._wave_specfrequencies
         else:
             raise TypeError('name not understood')
 
-    def set_grid_values(self, name, value):
-        if name == 'land_surface_10m-above_air_flow__speed':
-            self._wind_speed = value
-        elif name == 'sea_surface_air_flow__fetch_length':
-            self._fetch = value
-        elif name == 'sea_water__depth':
-            self._water_depth = value
+        return value
+
+    def get_value_ref(self, name):
+        raise NotImplementedError('get_value_ref')
+
+    def set_value(self, name, value):
+        if name in self._input_var_names:
+            self.get_value_ref(name)[:] = value
         else:
             raise TypeError('name not understood')
 
