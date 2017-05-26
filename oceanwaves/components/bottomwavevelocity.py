@@ -80,9 +80,12 @@ class BottomWaveVelocity(object):
 
     def calculate_ubr_vars(self, time):
         index = bisect(self._data[:, 0], self._time)
-        (wave_height, wave_period, water_depth) = self._data[index, 1:]
+        (self._wave_height,
+         self._wave_period,
+         self._water_depth) = self._data[index, 1:]
 
-        (wave_btmorbvel, wave_btmperiod) = ubspecpar(wind_speed, water_depth, fetch)
+        (wave_btmorbvel,
+         wave_btmperiod) = ubspecpar(wind_speed, water_depth, fetch)
 
         return wave_btmorbvel, wave_btmperiod
 
