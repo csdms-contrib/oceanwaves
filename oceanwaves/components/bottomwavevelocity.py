@@ -39,7 +39,8 @@ import numpy as np
 
 import oceanwaves as oc
 
-class WindWaves(object):
+
+class BottomWaveVelocity(object):
     _input_var_names = [
         'sea_surface_water_wave__height',
         'sea_surface_water_wave__period',
@@ -103,9 +104,9 @@ class WindWaves(object):
 
     def set_grid_values(self, name, value):
         if name == 'sea_surface_water_wave__height':
-            self._wind_speed = value
+            self._wave_height = value
         elif name == 'sea_surface_water_wave__period':
-            self._fetch = value
+            self._wave_period = value
         elif name == 'sea_water__depth':
             self._water_depth = value
         else:
