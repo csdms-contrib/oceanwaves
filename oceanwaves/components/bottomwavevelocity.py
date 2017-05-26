@@ -41,6 +41,8 @@ import oceanwaves as oc
 
 
 class BottomWaveVelocity(object):
+    _name = 'BottomWaveVelocity'
+
     _input_var_names = [
         'sea_surface_water_wave__height',
         'sea_surface_water_wave__period',
@@ -60,6 +62,9 @@ class BottomWaveVelocity(object):
         self._wave_btmperiod = 0.
         self._time = 0.
         self._data = np.zeros((1, 4))
+
+    def get_component_name(self):
+        return self._name
 
     def get_input_var_names(self):
         return self._input_var_names
