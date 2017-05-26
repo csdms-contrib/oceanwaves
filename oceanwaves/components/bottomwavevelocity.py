@@ -54,6 +54,14 @@ class BottomWaveVelocity(object):
         'sea_bottom_water_wave__period',
     ]
 
+    _var_units = {
+        'sea_surface_water_wave__height': 'm',
+        'sea_surface_water_wave__period': 's',
+        'sea_water__depth': 'm',
+        'sea_bottom_water_wave__max_of_orbital_speed': 'm / s',
+        'sea_bottom_water_wave__period': 's',
+    }
+
     _values = {
         'sea_bottom_water_wave__max_of_orbital_speed': '_wave_btmorbvel',
         'sea_bottom_water_wave__period': '_wave_btmperiod',
@@ -108,6 +116,21 @@ class BottomWaveVelocity(object):
 
     def finalize(self):
         self.__init__()
+
+    def get_var_units(self, name):
+        return self._var_units[name]
+
+    def get_var_grid(self, name):
+        return 0
+
+    def get_grid_type(self, gid):
+        return 'point'
+
+    def get_grid_x(self, gid):
+        return 0.
+
+    def get_grid_y(self, gid):
+        return 0.
 
     def get_value(self, name):
         return getattr(self, self._values[name])
