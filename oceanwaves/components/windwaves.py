@@ -43,17 +43,17 @@ class WindWaves(object):
 
     _name = 'WindWaves'
 
-    _input_var_names = [
+    _input_var_names = (
         'land_surface_10m-above_air_flow__speed',
         'sea_surface_air_flow__fetch_length',
         'sea_water__depth',
-    ]
+    )
 
-    _output_var_names = [
+    _output_var_names = (
         'sea_surface_water_wave__height',
         'sea_surface_water_wave__period',
         'sea_surface_water_wave__spectrum',
-    ]
+    )
 
     _var_units = {
         'land_surface_10m-above_air_flow__speed': 'm / s',
