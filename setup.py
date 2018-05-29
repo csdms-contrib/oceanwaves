@@ -13,6 +13,7 @@ setup(
     long_description=open('README.md').read(),
     setup_requires=['numpy>=1.7'],
     packages=find_packages(),
+    package_data={'oceanwaves':['data/*']},
     entry_points={
         'console_scripts': [
             'spectralhs = oceanwaves.cmd.spectralhs:main',
